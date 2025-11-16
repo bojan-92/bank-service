@@ -55,7 +55,7 @@ class BankServiceImpl : BankService {
         }
 
         val (first, second) =
-            if (from.id.toString() < to.id.toString()) from to to else to to from
+            if (from.id < to.id) from to to else to to from
 
         synchronized(first) {
             synchronized(second) {
