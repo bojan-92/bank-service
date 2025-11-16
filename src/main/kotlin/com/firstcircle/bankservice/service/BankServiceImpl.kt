@@ -17,9 +17,6 @@ class BankServiceImpl : BankService {
         initDeposit: BigDecimal,
         currency: String
     ): Account {
-        require(ownerName.isNotBlank()) { "Owner name must not be blank" }
-        require(initDeposit >= BigDecimal.ZERO) { "Initial deposit must be greater than zero" }
-
         val account = Account(
             ownerName = ownerName,
             currency = currency,
