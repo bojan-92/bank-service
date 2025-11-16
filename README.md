@@ -17,3 +17,13 @@ The service is designed to reflect real-world banking constraints, including con
 - Spring Boot 3
 - In-memory storage (ConcurrentHashMap)
 - JUnit 5
+
+<h2>How to run</h2>
+
+`./gradlew bootRun`
+
+This will run a CommandLineRunner demo.
+
+<h2>Run Tests</h2>
+
+`./gradlew test`
