@@ -149,4 +149,55 @@ class BankServiceTest {
 
         assertEquals(BigDecimal("5000.00"), service.getBalance(acc.id))
     }
+
+    @Test
+    fun `concurrent withdraws must not lose money`() {
+        val acc = service.createAccount("ConcurrentWithdrawUser", BigDecimal("5000"), "EUR")
+
+        val threads = 50
+        val withdrawPerThread = 100
+        val executor = Executors.newFixedThreadPool(threads)
+        val latch = CountDownLatch(threads)
+
+        repeat(threads) {
+            executor.submit {
+                repeat(withdrawPerThread) {
+                    service.withdraw(acc.id, BigDecimal("1"))
+                }
+                latch.countDown()
+            }
+        }
+
+        latch.await()
+        executor.shutdown()
+
+        assertEquals(BigDecimal("0.00"), service.getBalance(acc.id))
+    }
+
+    @Test
+    fun `concurrent transfers must not lose or create money`() {
+        val from = service.createAccount("FromUser", BigDecimal("5000"), "EUR")
+        val to = service.createAccount("ToUser", BigDecimal("0"), "EUR")
+
+        val threads = 50
+        val transfersPerThread = 100
+        val executor = Executors.newFixedThreadPool(threads)
+        val latch = CountDownLatch(threads)
+
+        repeat(threads) {
+            executor.submit {
+                repeat(transfersPerThread) {
+                    service.transfer(from.id, to.id, BigDecimal("1"))
+                }
+                latch.countDown()
+            }
+        }
+
+        latch.await()
+        executor.shutdown()
+
+        assertEquals(BigDecimal("0.00"), service.getBalance(from.id))
+        assertEquals(BigDecimal("5000.00"), service.getBalance(to.id))
+    }
+
 }
