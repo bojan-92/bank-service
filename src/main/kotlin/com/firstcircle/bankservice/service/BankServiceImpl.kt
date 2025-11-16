@@ -32,14 +32,14 @@ class BankServiceImpl : BankService {
 
     override fun deposit(accountId: UUID, amount: BigDecimal) {
         val account = getAccount(accountId)
-        synchronized(accounts) {
+        synchronized(account) {
             account.deposit(amount)
         }
     }
 
     override fun withdraw(accountId: UUID, amount: BigDecimal) {
         val account = getAccount(accountId)
-        synchronized(accounts) {
+        synchronized(account) {
             account.withdraw(amount)
         }
     }
